@@ -6,7 +6,7 @@
   "login.password": "Пароль",
   "login.submit": "Войти",
   "watch.title": "Просмотр",
-  "watch.subtitle": "Записи CCTV.",
+  "watch.subtitle": "Записи CCTV",
   "watch.logout": "Выйти",
   "watch.empty": "Видео в public/ не найдены.",
   "channel.label": "Канал"

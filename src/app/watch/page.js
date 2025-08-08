@@ -4,6 +4,7 @@ import en from "@/i18n/en.json";
 import uz from "@/i18n/uz.json";
 import ru from "@/i18n/ru.json";
 import { cookies } from "next/headers";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 function collectVideoPathsRecursively(baseDir) {
   const videoExtensions = new Set([".mp4", ".webm", ".ogg", ".mov", ".m4v"]);
@@ -40,16 +41,19 @@ export default async function WatchPage() {
   return (
     <div className="mx-auto max-w-screen-2xl p-6 grid gap-6">
       <header className="flex items-end justify-between gap-4">
-        <div>
+        <div className="flex items-end gap-4">
           <h1 className="text-2xl font-semibold">{t["watch.title"]}</h1>
           <p className="text-sm text-black/60 dark:text-white/60">{t["watch.subtitle"]}</p>
         </div>
+        <div className="flex items-center gap-3">
+          <LanguageSwitcher current={lang} />
         <a
           href="/api/logout"
           className="text-sm rounded-md border border-black/10 dark:border-white/15 px-3 py-1.5 hover:bg-black/5 dark:hover:bg-white/5"
         >
           {t["watch.logout"]}
         </a>
+        </div>
       </header>
 
       {videos.length === 0 ? (

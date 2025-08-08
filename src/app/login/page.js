@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import en from "@/i18n/en.json";
+import uz from "@/i18n/uz.json";
+import ru from "@/i18n/ru.json";
 
-const dict = {
-  en: (await import("@/i18n/en.json")).default,
-  uz: (await import("@/i18n/uz.json")).default,
-  ru: (await import("@/i18n/ru.json")).default,
-};
+const dict = { en, uz, ru };
 
 function useLocale() {
   const [lang, setLang] = useState("en");
@@ -103,35 +103,6 @@ export default function LoginPage() {
           </button>
         </form>
       </div>
-    </div>
-  );
-}
-
-function LanguageSwitcher({ current }) {
-  async function setLang(locale) {
-    await fetch("/api/lang", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ locale }),
-    });
-    location.reload();
-  }
-  const item = (value, label) => (
-    <button
-      type="button"
-      onClick={() => setLang(value)}
-      className={`text-xs rounded-md border px-2 py-1 ${
-        current === value ? "bg-foreground text-background" : "border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/5"
-      }`}
-    >
-      {label}
-    </button>
-  );
-  return (
-    <div className="flex items-center gap-2">
-      {item("en", "EN")}
-      {item("uz", "UZ")}
-      {item("ru", "RU")}
     </div>
   );
 }

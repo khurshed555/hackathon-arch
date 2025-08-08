@@ -6,7 +6,7 @@
   "login.password": "Password",
   "login.submit": "Sign in",
   "watch.title": "Watch",
-  "watch.subtitle": "CCTV recordings.",
+  "watch.subtitle": "CCTV recordings",
   "watch.logout": "Logout",
   "watch.empty": "No videos found in public/.",
   "channel.label": "Channel"
