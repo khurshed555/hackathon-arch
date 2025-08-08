@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# CCTV Viewer
+
+A minimal, secure CCTV viewing dashboard built with Next.js 15, React 19 and Tailwind CSS v4. It authenticates with credentials from `.env`, protects private routes via middleware, autodiscovers videos from `public/`, and supports English, Uzbek, and Russian.
+
+![Demo](public/demo.gif)
+
+### Features
+- **Auth**: Username/password from `.env`, httpOnly session cookie, middleware-protected routes
+- **CCTV Watch**: Grid of autoplaying, looping, muted videos from `public/` (recursively)
+- **i18n**: EN / UZ / RU with on-page language switcher persisted via cookie
+- **Clean UI**: Tailwind v4, responsive grid, logout control
+
+### Tech
+- Next.js 15 (App Router)
+- React 19
+- Tailwind CSS v4 (`@tailwindcss/postcss`)
+- ESLint 9 (Next core web vitals)
+
+---
 
 ## Getting Started
 
-First, run the development server:
-
+### 1) Install
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm i
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2) Configure environment
+Create a `.env` file at the project root (you can copy `.env.example`).
+```env
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=changeme
+```
+Use strong values in production.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 3) Run
+```bash
+npm run dev
+# open http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4) Build & start (production)
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## Usage
+- Visit `/`:
+  - Not logged in → redirected to `/login`
+  - Logged in → redirected to `/watch`
+- Sign in at `/login` using the credentials from `.env`
+- Watch grid at `/watch`
+- Logout via the header control (links to `/api/logout`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Language switching
+- Toggle EN / UZ / RU from the header (or login page).
+- Selected locale is stored in a `lang` cookie and applied to the page.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How it works
 
-## Deploy on Vercel
+### Auth & middleware
+- `POST /api/login`: validates credentials from `.env`, sets `session` httpOnly cookie containing a SHA-256 digest of `username|password`.
+- `GET /api/logout`: clears the session cookie and redirects to `/login`.
+- `middleware.js`: protects `/watch` and `/admin/*`, redirects `/` based on login state.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### i18n
+- Language files in `src/i18n`: `en.json`, `uz.json`, `ru.json`.
+- `lang` cookie controls the UI language; switcher writes the cookie client-side and triggers a soft refresh.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Video discovery
+- Server components (`/watch`) read `public/` recursively, normalize Windows paths, and render a responsive grid.
+
+---
+
+## Scripts
+- `npm run dev` – start dev server (Turbopack)
+- `npm run build` – production build
+- `npm start` – start production server
+- `npm run lint` – run ESLint
+
+---
+
+## Project Structure (excerpt)
+```
+src/
+  app/
+    api/
+      login/route.js
+      logout/route.js
+      lang/route.js
+    login/page.js
+    watch/page.js
+    layout.js
+  components/
+    LanguageSwitcher.js
+  i18n/
+    en.json
+    uz.json
+    ru.json
+    config.js
+public/
+  demo.gif
+```
+
+---
+
+## Notes for production
+- Set strong `ADMIN_USERNAME` and `ADMIN_PASSWORD` values
+- Serve over HTTPS so cookies can be marked `secure`
+- Keep videos in a storage bucket/CDN if `public/` becomes large
