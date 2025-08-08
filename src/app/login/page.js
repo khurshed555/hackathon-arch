@@ -2,10 +2,28 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+
+const dict = {
+  en: (await import("@/i18n/en.json")).default,
+  uz: (await import("@/i18n/uz.json")).default,
+  ru: (await import("@/i18n/ru.json")).default,
+};
+
+function useLocale() {
+  const [lang, setLang] = useState("en");
+  useEffect(() => {
+    const cookie = document.cookie.split("; ").find((r) => r.startsWith("lang="));
+    const value = cookie?.split("=")[1];
+    if (value && ["en", "uz", "ru"].includes(value)) setLang(value);
+  }, []);
+  return lang;
+}
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const lang = useLocale();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,10 +55,15 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen grid place-items-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-neutral-950 dark:to-neutral-900 p-6">
       <div className="w-full max-w-md rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-black/30 backdrop-blur p-6 shadow-sm">
-        <h1 className="text-2xl font-semibold mb-1">Sign in</h1>
-        <p className="text-sm text-black/60 dark:text-white/60 mb-6">
-          Use your admin credentials to access the dashboard.
-        </p>
+        <div className="flex items-start justify-between mb-4 gap-4">
+          <div>
+            <h1 className="text-2xl font-semibold mb-1">{dict[lang]["login.title"]}</h1>
+            <p className="text-sm text-black/60 dark:text-white/60">
+              {dict[lang]["login.subtitle"]}
+            </p>
+          </div>
+          <LanguageSwitcher current={lang} />
+        </div>
         {errorMessage ? (
           <div className="mb-4 rounded-lg border border-red-200 bg-red-50 text-red-700 px-3 py-2 text-sm dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-200">
             {errorMessage}
@@ -48,7 +71,7 @@ export default function LoginPage() {
         ) : null}
         <form onSubmit={handleSubmit} className="grid gap-4">
           <label className="grid gap-1">
-            <span className="text-sm font-medium">Username</span>
+            <span className="text-sm font-medium">{dict[lang]["login.username"]}</span>
             <input
               type="text"
               autoComplete="username"
@@ -60,7 +83,7 @@ export default function LoginPage() {
             />
           </label>
           <label className="grid gap-1">
-            <span className="text-sm font-medium">Password</span>
+            <span className="text-sm font-medium">{dict[lang]["login.password"]}</span>
             <input
               type="password"
               autoComplete="current-password"
@@ -76,10 +99,39 @@ export default function LoginPage() {
             disabled={isSubmitting}
             className="h-10 rounded-md bg-foreground text-background font-medium hover:opacity-90 disabled:opacity-50"
           >
-            {isSubmitting ? "Signing in…" : "Sign in"}
+            {isSubmitting ? "…" : dict[lang]["login.submit"]}
           </button>
         </form>
       </div>
+    </div>
+  );
+}
+
+function LanguageSwitcher({ current }) {
+  async function setLang(locale) {
+    await fetch("/api/lang", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ locale }),
+    });
+    location.reload();
+  }
+  const item = (value, label) => (
+    <button
+      type="button"
+      onClick={() => setLang(value)}
+      className={`text-xs rounded-md border px-2 py-1 ${
+        current === value ? "bg-foreground text-background" : "border-black/10 dark:border-white/15 hover:bg-black/5 dark:hover:bg-white/5"
+      }`}
+    >
+      {label}
+    </button>
+  );
+  return (
+    <div className="flex items-center gap-2">
+      {item("en", "EN")}
+      {item("uz", "UZ")}
+      {item("ru", "RU")}
     </div>
   );
 }

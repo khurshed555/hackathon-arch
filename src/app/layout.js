@@ -1,4 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
+import { cookies } from "next/headers";
+import { defaultLocale, getMessages, supportedLocales } from "@/i18n/config";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,12 +18,14 @@ export const metadata = {
   description: "Secure CCTV monitoring dashboard",
 };
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const cookieStore = await cookies();
+  const cookieLang = cookieStore.get("lang")?.value ?? defaultLocale;
+  const lang = supportedLocales.includes(cookieLang) ? cookieLang : defaultLocale;
+  await getMessages(lang); // ensure locale chunk is loaded early
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang={lang}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
     </html>

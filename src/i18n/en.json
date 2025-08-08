@@ -1,0 +1,13 @@
+{
+  "app.title": "CCTV Viewer",
+  "login.title": "Sign in",
+  "login.subtitle": "Use your admin credentials to access the dashboard.",
+  "login.username": "Username",
+  "login.password": "Password",
+  "login.submit": "Sign in",
+  "watch.title": "Watch",
+  "watch.subtitle": "CCTV recordings.",
+  "watch.logout": "Logout",
+  "watch.empty": "No videos found in public/.",
+  "channel.label": "Channel"
+}

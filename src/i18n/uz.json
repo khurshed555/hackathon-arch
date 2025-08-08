@@ -1,0 +1,13 @@
+{
+  "app.title": "Kuzatuv oynasi",
+  "login.title": "Kirish",
+  "login.subtitle": "Boshqaruv paneliga kirish uchun administrator ma'lumotlarini kiriting.",
+  "login.username": "Foydalanuvchi nomi",
+  "login.password": "Parol",
+  "login.submit": "Kirish",
+  "watch.title": "Tomosha qilish",
+  "watch.subtitle": "Kuzatuv yozuvlari.",
+  "watch.logout": "Chiqish",
+  "watch.empty": "public/ ichida video topilmadi.",
+  "channel.label": "Kanal"
+}
